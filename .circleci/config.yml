@@ -1,0 +1,19 @@
+version: 2.1
+orbs:
+  codecov: codecov/codecov@3.0.0
+jobs:
+  build:
+    working_directory: /root/project/Colocalization.jl   # Clone into a directory whose name matches your Package.
+    docker:
+      - image: julia:1.7
+    steps:
+      - run: pwd
+      - run: ls -alsht
+      - run: apt update
+      - run: apt install python3 -y
+      - run: apt install python3-pip -y
+      - run: pip3 install smlmvis
+      - run:
+          command: julia -e 'using Pkg; Pkg.add("Coverage"); Pkg.add(url="https://github.com/bencardoen/ERGO.jl.git"); Pkg.add(url="https://github.com/bencardoen/SPECHT.jl.git");  Pkg.add(url="git@github.com:bencardoen/Colocalization.jl.git"); Pkg.test("Colocalization", coverage=true)'
+      - run:
+          command: julia -e 'using Pkg; cd(Pkg.dir("Colocalization")); using Coverage; Codecov.submit(Codecov.process_folder())'
