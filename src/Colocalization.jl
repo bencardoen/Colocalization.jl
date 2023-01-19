@@ -60,10 +60,10 @@ end
 function colocalize_all(xs, ys; windowsize=3)
     mt = keys(Colocalization.metrics) |> collect
     res = Dict([(k, zeros(size(xs))) for k in mt])
-	p = Progress(length(mt))
+	# p = Progress(length(mt))
     for metric in mt
         res[metric] = colocalize(xs, ys; metric=metric, windowsize=windowsize)
-		next!(p)
+		# next!(p)
     end
     return res
 end
@@ -95,7 +95,7 @@ function colocalize(xs, ys; metric="pearson", windowsize=3)
     mf = metrics[metric]
     result = zeros(size(xs))
 	N = (X-k*2)
-    for yi in k+1:(Y-k)
+    @showprogress for yi in k+1:(Y-k)
 			for xi in k+1:(X-k)
     			result[xi, yi] = nanz(mf(xs[xi-k:xi+k, yi-k:yi+k], ys[xi-k:xi+k, yi-k:yi+k]))
 			end
