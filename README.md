@@ -115,3 +115,8 @@ If you find this useful, consider citing:
 ```
 
 **Note** For the individual metrics, please cite the introducing author!!!.
+
+### Related software
+FiJi:
+- [https://imagej.net/plugins/coloc-2](https://imagej.net/plugins/coloc-2)
+- [https://github.com/fiji/Colocalisation_Analysis](https://github.com/fiji/Colocalisation_Analysis)
