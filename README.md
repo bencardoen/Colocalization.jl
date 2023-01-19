@@ -2,31 +2,8 @@
 
 Provides colocalization metrics for images and their sparse representations.
 
-## Installation
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/bencardoen/Colocalization.jl/tree/main.svg?style=svg&circle-token=50ed75938474a05f8c9ed7343d9d6134131f5519)](https://dl.circleci.com/status-badge/redirect/gh/bencardoen/Colocalization.jl/tree/main) [![codecov](https://codecov.io/gh/bencardoen/Colocalization.jl/branch/main/graph/badge.svg?token=50R4ZYYY1V)](https://codecov.io/gh/bencardoen/Colocalization.jl)
 
-## Usage
-```julia
-using Colocalization
-using Random
-using Images
-using ImageView
-X = 100
-Y = 200
-# Create 2 random images
-xs = Random.rand(X, Y)
-ys = Random.rand(X, Y) .+ .2
-res = colocalize_all(xs, ys)
-# res is a dictionary with each metric being the key to the results
-for metric in keys(Colocalization.metrics)
-        coloc_m = res[metric]
-end
-# Let's summarize the results in a dataframe
-df = summarize_colocalization(res, "f1", "f2")
-```
-Colocalization is defined on a window of 3x3 by default, you can change this:
-```julia
-res = colocalize_all(xs, ys; windowsize=11)
-```
 
 ## In silico example
 spearman", "m2", "m1", "jaccard", "manders", "sorensen", "pearson"]
@@ -81,3 +58,38 @@ imshow(mv)
 ```
 Which should produce something like the below image.
 ![demo.png](resultseg.png)
+
+You can pass parameters, such as windowsize (default 3x3) to the function, please see their docstrings:
+```julia
+using Colocalization
+?colocalize_all
+```
+
+## Installation
+- Download [Julia](https://julialang.org/learning/getting-started/)
+
+### Cloning the repository
+```bash
+git clone https://github.com/bencardoen/Colocalization.jl.git
+cd Colocalization.jl
+julia --project=.
+```
+in Julia
+```julia
+using Pkg
+Pkg.instantiate()
+```
+That's it.
+
+### Using as a package
+```bash
+julia
+```
+In Julia
+```julia
+using Pkg
+Pkg.add(url="https://github.com/bencardoen/ERGO.jl")
+Pkg.add(url="https://github.com/bencardoen/SPECHT.jl")
+Pkg.add(url="https://github.com/bencardoen/Colocalization.jl")
+using Colocalization
+```
