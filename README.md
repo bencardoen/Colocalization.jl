@@ -2,7 +2,12 @@
 
 Provides colocalization metrics for images and their sparse representations.
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/bencardoen/Colocalization.jl/tree/main.svg?style=svg&circle-token=50ed75938474a05f8c9ed7343d9d6134131f5519)](https://dl.circleci.com/status-badge/redirect/gh/bencardoen/Colocalization.jl/tree/main) [![codecov](https://codecov.io/gh/bencardoen/Colocalization.jl/branch/main/graph/badge.svg?token=50R4ZYYY1V)](https://codecov.io/gh/bencardoen/Colocalization.jl)
+The metrics used are (for now) standard metrics, which I needed for a different project as comparison/baseline. 
+I'll update as I come across more metrics.
+
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/bencardoen/Colocalization.jl/tree/main.svg?style=svg&circle-token=50ed75938474a05f8c9ed7343d9d6134131f5519)](https://dl.circleci.com/status-badge/redirect/gh/bencardoen/Colocalization.jl/tree/main) [![codecov](https://codecov.io/gh/bencardoen/Colocalization.jl/branch/main/graph/badge.svg?token=50R4ZYYY1V)](https://codecov.io/gh/bencardoen/Colocalization.jl) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7552357.svg)](https://doi.org/10.5281/zenodo.7552357)
+
+
 
 
 ## In silico example
@@ -93,3 +98,25 @@ Pkg.add(url="https://github.com/bencardoen/SPECHT.jl")
 Pkg.add(url="https://github.com/bencardoen/Colocalization.jl")
 using Colocalization
 ```
+
+
+### Cite
+If you find this useful, consider citing:
+```bibtext
+@software{ben_cardoen_2023_7552357,
+  author       = {Ben Cardoen},
+  title        = {Colocalization.jl},
+  month        = jan,
+  year         = 2023,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.7552357},
+  url          = {https://doi.org/10.5281/zenodo.7552357}
+}
+```
+
+**Note** For the individual metrics, please cite the introducing author!!!.
+
+### Related software
+FiJi:
+- [https://imagej.net/plugins/coloc-2](https://imagej.net/plugins/coloc-2)
+- [https://github.com/fiji/Colocalisation_Analysis](https://github.com/fiji/Colocalisation_Analysis)
