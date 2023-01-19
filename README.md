@@ -98,3 +98,20 @@ Pkg.add(url="https://github.com/bencardoen/SPECHT.jl")
 Pkg.add(url="https://github.com/bencardoen/Colocalization.jl")
 using Colocalization
 ```
+
+
+### Cite
+If you find this useful, consider citing:
+```bibtext
+@software{ben_cardoen_2023_7552357,
+  author       = {Ben Cardoen},
+  title        = {Colocalization.jl},
+  month        = jan,
+  year         = 2023,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.7552357},
+  url          = {https://doi.org/10.5281/zenodo.7552357}
+}
+```
+
+**Note** For the individual metrics, please cite the introducing author!!!.
