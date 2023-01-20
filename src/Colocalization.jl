@@ -18,7 +18,6 @@ module Colocalization
 
 using Statistics
 using DataFrames
-using SPECHT
 using ProgressMeter
 using Distributions
 using ImageFiltering
@@ -40,10 +39,13 @@ function describe_array(xs)
         return NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, nans
     end
     xps = xs[.! isnan.(xs)]
-    μ, md, σ, min, max = SPECHT.describeimg(xps)
+	m, M = minimum(xps), maximum(xps)
+	md = quantile(xps, [.5])[1]
+	μ = mean(xps)
+	σ = std(xps)
     q1, q3, q95, q99 = quantile(xps, [0.25, 0.75, 0.95, 0.99])
     iqr = (q3-q1)/2
-    return μ, md, σ, min, max, q1, q3, iqr, q95, q99, nans
+    return μ, md, σ, m, M, q1, q3, iqr, q95, q99, nans
 end
 
 """

@@ -14,6 +14,6 @@ jobs:
       - run: apt install python3-pip -y
       - run: pip3 install smlmvis
       - run:
-          command: julia -e 'using Pkg; Pkg.add("Coverage"); Pkg.add(url="https://github.com/bencardoen/ERGO.jl.git"); Pkg.add(url="https://github.com/bencardoen/SPECHT.jl.git");  Pkg.add(url="git@github.com:bencardoen/Colocalization.jl.git"); Pkg.test("Colocalization", coverage=true)'
+          command: julia -e 'using Pkg; Pkg.add("Coverage");  Pkg.add(url="git@github.com:bencardoen/Colocalization.jl.git"); Pkg.test("Colocalization", coverage=true)'
       - run:
           command: julia -e 'using Pkg; cd(Pkg.dir("Colocalization")); using Coverage; Codecov.submit(Codecov.process_folder())'
