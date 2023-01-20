@@ -21,8 +21,9 @@ using DataFrames
 using SPECHT
 using ProgressMeter
 using Distributions
+using ImageFiltering
 
-export describe_array, colocalize_all, colocalize, summarize_colocalization
+export describe_array, colocalize_all, colocalize, segment, summarize_colocalization
 
 
 """
@@ -32,6 +33,7 @@ export describe_array, colocalize_all, colocalize, summarize_colocalization
 
 """
 function describe_array(xs)
+	xs = Float64.(xs)
     X, Y = size(xs)
     nans = length(xs[isnan.(xs)])
     if nans == X*Y
@@ -68,6 +70,13 @@ function colocalize_all(xs, ys; windowsize=3)
     return res
 end
 
+function segment(img)
+    rimg = copy(img)
+    t=otsu_threshold(rimg)
+    rimg[rimg .< t] .=0
+    return rimg
+end
+
 """
 	colocalize(xs, ys; metric="pearson", windowsize=3)
 
@@ -75,8 +84,10 @@ end
 
 	See `metrics` for metrics to use.
 """
-function colocalize(xs, ys; metric="pearson", windowsize=3)
-    @info "Coloc with window $windowsize  and metric $metric for input $(size(xs))"
+function colocalize(_xs, _ys; metric="pearson", windowsize=3)
+	xs = Float64.(_xs)
+	ys = Float64.(_ys)
+	@info "Coloc with window $windowsize  and metric $metric for input $(size(xs))"
     X, Y = size(xs)
 	if size(xs)!=size(ys)
 		@error "Dimensions $(size(xs)) $(size(ys))"
