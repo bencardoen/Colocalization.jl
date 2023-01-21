@@ -53,4 +53,27 @@ using Logging
         @test all(img0 .== zero(eltype(img1)))
         @test all(img1 .== img2)
     end
+    @testset "full_coloc" begin
+        X = zeros(10, 10)
+        Y = zeros(10, 10)
+        UM = union_mask(X, Y)
+        @test sum(UM) == 0
+        @test sum(intersection_mask(X, Y)) == 0
+        X[4:6, 4:6].=1
+        Y[5:7, 5:7].=1
+        @test sum(union_mask(X, Y)) == 14
+        @test sum(intersection_mask(X, Y)) == 4
+    end
+
+    @testset "df" begin
+        X = zeros(20, 20)
+        Y = zeros(20, 20)
+        X[4:6, 4:6].=1
+        Y[5:7, 5:7].=1
+        X[10:12, 10:12] .= 1
+        Y[15:16, 15:16] .= 1
+        xr, yr = union_distance_mask(X, Y, 8)
+        @test sum(xr) == sum(X)
+        @test sum(yr) == sum(Y)
+    end
 end

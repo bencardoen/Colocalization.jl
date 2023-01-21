@@ -22,8 +22,9 @@ using ProgressMeter
 using Images
 using Distributions
 using ImageFiltering
+using ImageMorphology
 
-export describe_array, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization
+export describe_array, intersection_mask, union_mask, union_distance_mask, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization
 
 
 """
@@ -48,6 +49,67 @@ function describe_array(xs)
     iqr = (q3-q1)/2
     return μ, md, σ, m, M, q1, q3, iqr, q95, q99, nans
 end
+
+"""
+	union_distance_mask(xs, ys, distance)
+
+	Finds the connected components in X that are <= distance to any component in Y and vice versa
+
+	Returns mask_x, mask_y
+"""
+function union_distance_mask(xs, ys, distance)
+	xm=Int8.(Colocalization.tomask(xs))
+	ym=Int8.(Colocalization.tomask(ys))
+	distance_map_x = Images.distance_transform(Images.feature_transform(Bool.(xm)))
+	distance_map_y = Images.distance_transform(Images.feature_transform(Bool.(ym)))
+	rx = Colocalization.aszero(xs)
+	ry = Colocalization.aszero(ys)
+	ccx = label_components(Colocalization.tomask(xm))
+	ccy = label_components(Colocalization.tomask(ym))
+	for ind in component_indices(ccx)[2:end]
+		if minimum(distance_map_y[ind]) <= distance
+			rx[ind] .= 1
+		end
+	end
+	for ind in component_indices(ccy)[2:end]
+		if minimum(distance_map_x[ind]) <= distance
+			ry[ind] .= 1
+		end
+	end
+	return rx, ry
+end
+
+"""
+	intersection_mask(xs, ys)
+
+	mask where x .> 0 and y .> 0
+"""
+function intersection_mask(xs, ys)
+	xm=Colocalization.tomask(xs)
+	ym=Colocalization.tomask(ys)
+	return xm .* ym
+end
+
+
+"""
+	union_mask(xs, ys)
+
+	mask where any component that has a non-zero intersection is set to 1.
+"""
+function union_mask(xs, ys)
+	xm=Int8.(Colocalization.tomask(xs))
+	ym=Int8.(Colocalization.tomask(ys))
+	joint = xm .+ ym
+	res = Colocalization.aszero(xs)
+	ccs = label_components(Colocalization.tomask(joint))
+	for ind in component_indices(ccs)
+		if maximum(joint[ind]) == 2
+			res[ind] .= 1
+		end
+	end
+	return res
+end
+
 
 """
     tomask(img)
