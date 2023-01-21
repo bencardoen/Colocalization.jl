@@ -1,9 +1,12 @@
 using Colocalization
 using Test
 using Random
+using Logging
 
 @testset "Colocalization.jl" begin
     @testset "Coloc" begin
+        c = global_logger()
+        global_logger(NullLogger())
         X, Y = 100, 200
         Random.seed!(42)
         for i in 1:100
@@ -24,6 +27,7 @@ using Random
             @test size(df, 1) == length(Colocalization.metrics)
             @test !isnothing(df)
         end
+        global_logger(NullLogger())
     end
     @testset "tomask" begin
         Random.seed!(42)
