@@ -19,10 +19,11 @@ module Colocalization
 using Statistics
 using DataFrames
 using ProgressMeter
+using Images
 using Distributions
 using ImageFiltering
 
-export describe_array, colocalize_all, colocalize, segment, summarize_colocalization
+export describe_array, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization
 
 
 """
@@ -49,6 +50,26 @@ function describe_array(xs)
 end
 
 """
+    tomask(img)
+
+	Utility function to binarize argument
+"""
+function tomask(img)
+    c = copy(img)
+    c[c .> 0] .= 1
+    return Images.Gray{Images.N0f8}.(c)
+end
+
+"""
+	aszero(xs)
+
+	zeros(eltype(xs), sizes(xs))
+"""
+function aszero(xs)
+    return zeros(eltype(xs), size(xs))
+end
+
+"""
 	colocalize_all(xs, ys; windowsize=3)
 
 	Apply all coloc metrics. Returns a dictionary, so results are stored in results[metric].
@@ -64,10 +85,8 @@ end
 function colocalize_all(xs, ys; windowsize=3)
     mt = keys(Colocalization.metrics) |> collect
     res = Dict([(k, zeros(size(xs))) for k in mt])
-	# p = Progress(length(mt))
     for metric in mt
         res[metric] = colocalize(xs, ys; metric=metric, windowsize=windowsize)
-		# next!(p)
     end
     return res
 end
@@ -106,7 +125,7 @@ function colocalize(_xs, _ys; metric="pearson", windowsize=3)
 	end
     # metrics = Dict([("pearson", coloc_pearson), ("spearman", coloc_spearman), ("jaccard", coloc_jaccard), ("manders", coloc_manders), ("m1", coloc_m1), ("sorensen", coloc_sorensen), ("m2", coloc_m2)])
     mf = metrics[metric]
-    result = zeros(size(xs))
+    result = aszero(xs)
 	N = (X-k*2)
     @showprogress for yi in k+1:(Y-k)
 			for xi in k+1:(X-k)
