@@ -42,6 +42,17 @@ using Logging
         @test all(msk[i2 .== 0].== 0)
     end
 
+    @testset "nowindow" begin
+        X = ones(20, 20)
+        Y = ones(20, 20)
+        r=colocalize_nowindow(X, Y)
+        @test iszero(r)
+        X = ones(20, 20) .+ rand(20, 20)./100
+        Y = ones(20, 20) .- rand(20, 20)./100
+        r=colocalize_nowindow(X, Y)
+        @test 0 < r <= .2
+    end
+
     @testset "aszero" begin
         Random.seed!(42)
         X = 10

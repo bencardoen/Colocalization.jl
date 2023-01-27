@@ -19,7 +19,6 @@ using Logging
 using Dates
 using ArgParse
 using LoggingExtras
-using SmlmTools
 using Colocalization
 using Images
 
@@ -44,9 +43,13 @@ function parse_commandline()
             action = :store_true
             default = false
 		"--windowsize", "-w"
-			help = "Windowsize used in colocalization (default = 3, should be odd >= 3)"
+			help = "Windowsize used in colocalization (default = 3, should be odd >= 3). If you don't want to use a window, set to -1"
 			arg_type = Int64
 			default = 3
+		"--metric", "-m"
+			help = "Which colocalization metric to use. Defaults to 'all', e.g. all supported metrics."
+			arg_type = String
+			default = "all"
     end
 
     return parse_args(s)
@@ -78,6 +81,12 @@ function runcoloc()
 		C1 = segment(C1)
 		C2 = segment(C2)
 	end
+	MT = nothing
+	if parsed_args["metric"] != "all"
+		MT = parsed_args["metric"]
+	end
+	X, Y = size(C1)
+	windowsize = minimum(X, Y)-1
 	results = colocalize_all(C1, C2; windowsize=parsed_args["windowsize"])
 	for k in keys(results)
 		Images.save(joinpath(outdir, "$k.tif"), N0f16.(nmz(abs.(results[k]))))

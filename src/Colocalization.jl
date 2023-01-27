@@ -24,7 +24,7 @@ using Distributions
 using ImageFiltering
 using ImageMorphology
 
-export describe_array, intersection_mask, union_mask, union_distance_mask, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization
+export describe_array, intersection_mask, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization
 
 
 """
@@ -144,11 +144,15 @@ end
 	μ, md, σ, min, max, q1, q3, iqr, q95, q99, nans = describe_map(correlation_values)
 	```
 """
-function colocalize_all(xs, ys; windowsize=3)
+function colocalize_all(xs, ys; windowsize=3, metric=nothing)
     mt = keys(Colocalization.metrics) |> collect
+	if !isnothing(metric)
+		@info "Filtering on $metric"
+		filter!(x -> x == metric, mt)
+	end
     res = Dict([(k, zeros(size(xs))) for k in mt])
-    for metric in mt
-        res[metric] = colocalize(xs, ys; metric=metric, windowsize=windowsize)
+    for met in mt
+        res[met] = colocalize(xs, ys; metric=met, windowsize=windowsize)
     end
     return res
 end
@@ -165,6 +169,8 @@ end
 
 	Compute a colocalization metric `metric` on a window size of `windowsize^2`.
 
+	Set `windowsize` to >= 3, odd. If set to -1, use the entire image, output will be single scalar.
+
 	See `metrics` for metrics to use.
 """
 function colocalize(_xs, _ys; metric="pearson", windowsize=3)
@@ -175,6 +181,9 @@ function colocalize(_xs, _ys; metric="pearson", windowsize=3)
 	if size(xs)!=size(ys)
 		@error "Dimensions $(size(xs)) $(size(ys))"
 		throw(ArgumentError("Dimensions $(size(xs)) $(size(ys))"))
+	end
+	if windowsize == -1
+		return colocalize_nowindow(_xs, _ys; metric=metric)
 	end
 	if !((windowsize %2 == 1) || (windowsize >= 3))
 		@error "Invalid windowsize $windowsize , should be >=3 and odd"
@@ -195,6 +204,11 @@ function colocalize(_xs, _ys; metric="pearson", windowsize=3)
 			end
     end
     return result
+end
+
+function colocalize_nowindow(_xs, _ys; metric="pearson")
+	mf = metrics[metric]
+	return nanz(mf(Float64.(_xs),Float64.(_ys)))
 end
 
 function summarize_colocalization(results, f1, f2)
