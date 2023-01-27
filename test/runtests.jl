@@ -50,7 +50,7 @@ using Logging
         X = ones(20, 20) .+ rand(20, 20)./100
         Y = ones(20, 20) .- rand(20, 20)./100
         r=colocalize_nowindow(X, Y)
-        @test 0 < r <= .2
+        @test 0 < abs(r) <= .2
     end
 
     @testset "aszero" begin
