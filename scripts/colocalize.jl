@@ -97,4 +97,4 @@ function runcoloc()
 end
 
 
-runalign()
+runcoloc()

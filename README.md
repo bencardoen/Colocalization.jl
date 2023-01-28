@@ -86,6 +86,12 @@ Pkg.instantiate()
 ```
 That's it.
 
+#### On Command line
+Let's say you have 2 image files `a.tif` and `b.tif`.
+```
+julia --project=. scripts/colocalize.jl -f a.tif -s b.tif --outdir . --segment -w 3
+```
+
 ### Using as a package
 ```bash
 julia
@@ -93,8 +99,6 @@ julia
 In Julia
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/bencardoen/ERGO.jl")
-Pkg.add(url="https://github.com/bencardoen/SPECHT.jl")
 Pkg.add(url="https://github.com/bencardoen/Colocalization.jl")
 using Colocalization
 ```
