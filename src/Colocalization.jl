@@ -173,7 +173,7 @@ end
 
 	See `metrics` for metrics to use.
 """
-function colocalize(_xs, _ys; metric="pearson", windowsize=3)
+function colocalize_2d(_xs, _ys; metric="pearson", windowsize=3)
 	xs = Float64.(_xs)
 	ys = Float64.(_ys)
 	@info "Coloc with window $windowsize  and metric $metric for input $(size(xs))"
@@ -204,6 +204,55 @@ function colocalize(_xs, _ys; metric="pearson", windowsize=3)
 			end
     end
     return result
+end
+
+function colocalize(_xs::Array{T, 3}, _ys::Array{T, 3}; metric="pearson", windowsize=3) where T <: Number
+	@info "3D"
+	xs = Float64.(_xs)
+	ys = Float64.(_ys)
+	@info "Coloc with window $windowsize  and metric $metric for input $(size(xs))"
+    X, Y, Z = size(xs)
+	if size(xs)!=size(ys)
+		@error "Dimensions $(size(xs)) $(size(ys))"
+		throw(ArgumentError("Dimensions $(size(xs)) $(size(ys))"))
+	end
+	if windowsize == -1
+		return colocalize_nowindow(_xs, _ys; metric=metric)
+	end
+	if !((windowsize %2 == 1) || (windowsize >= 3))
+		@error "Invalid windowsize $windowsize , should be >=3 and odd"
+		throw(ArgumentError("Invalid windowsize $windowsize , should be >=3 and odd"))
+	end
+    k = Int((windowsize-1)/2)
+	if !(metric ∈ keys(metrics))
+		@error "Invalid metric: supported metrics are $(keys(metrics))"
+		throw(ArgumentError("Invalid metric $metric"))
+	end
+    mf = metrics[metric]
+    result = aszero(xs)
+	@showprogress for zi in k+1:(Z-k)
+		for yi in k+1:(Y-k)
+			for xi in k+1:(X-k)
+    			result[xi, yi, zi] = nanz(mf(xs[xi-k:xi+k, yi-k:yi+k, zi-k:zi+k], ys[xi-k:xi+k, yi-k:yi+k, zi-k:zi+k]))
+			end
+    	end
+	end
+    return result
+end
+
+function colocalize(_xs::Array{T, 2}, _ys::Array{T, 2}; metric="pearson", windowsize=3) where T <: Number
+	@info "2D"
+	return colocalize_2d(_xs, _ys; metric=metric, windowsize=windowsize)
+end
+
+function colocalize(_xs::Matrix, _ys::Matrix; metric="pearson", windowsize=3)
+	@info "2D"
+	return colocalize_2d(_xs, _ys; metric=metric, windowsize=windowsize)
+end
+
+function colocalize(_xs, _ys; metric="pearson", windowsize=3)
+	@error "NOT IMPLEMENTED"
+	throw(ArgumentError("Invalid arugment type $(type(_xs))"))
 end
 
 function colocalize_nowindow(_xs, _ys; metric="pearson")
