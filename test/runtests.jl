@@ -30,6 +30,12 @@ using Logging
         global_logger(c)
     end
 
+    @testset "seg" begin
+        s = rand(100, 100)
+        sm = segment(s)
+        @test sum(s) > sum(sm)
+    end
+
     @testset "Coloc3d" begin
         c = global_logger()
         global_logger(NullLogger())
