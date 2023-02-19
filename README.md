@@ -106,14 +106,6 @@ Pkg.instantiate()
 ```
 That's it.
 
-You can also add Colocalization as a package to your base or specific environment:
-```julia
-using Pkg
-# Optionally, activate your environment
-# Pkg.activate("path/to/your/environment")
-Pkg.add(url="https:://github.com/bencardoen/Colocalization.jl")
-```
-
 #### On Command line
 Let's say you have 2 image files `a.tif` and `b.tif`.
 ```
@@ -121,14 +113,11 @@ julia --project=. scripts/colocalize.jl -f a.tif -s b.tif --outdir . --segment -
 ```
 
 ### Using as a package
-```bash
-julia
-```
-In Julia
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/bencardoen/Colocalization.jl")
-using Colocalization
+# Optionally, activate your environment
+# Pkg.activate("path/to/your/environment")
+Pkg.add(url="https:://github.com/bencardoen/Colocalization.jl")
 ```
 
 
