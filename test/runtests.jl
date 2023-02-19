@@ -30,6 +30,15 @@ using Logging
         global_logger(c)
     end
 
+    @testset "view" begin
+        mt = list_metrics()
+        @test length(mt) == length(Colocalization.metrics)
+        @test all(mt .== keys(Colocalization.metrics))
+        it = metrics_iterator()
+        its = it |> collect
+        @test length(its) == length(mt)
+    end
+
     @testset "seg" begin
         s = rand(100, 100)
         sm = segment(s)

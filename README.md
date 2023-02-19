@@ -8,13 +8,23 @@ I'll update as I come across more metrics.
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/bencardoen/Colocalization.jl/tree/main.svg?style=svg&circle-token=50ed75938474a05f8c9ed7343d9d6134131f5519)](https://dl.circleci.com/status-badge/redirect/gh/bencardoen/Colocalization.jl/tree/main) [![codecov](https://codecov.io/gh/bencardoen/Colocalization.jl/branch/main/graph/badge.svg?token=50R4ZYYY1V)](https://codecov.io/gh/bencardoen/Colocalization.jl) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7552357.svg)](https://doi.org/10.5281/zenodo.7552357)
 
 
-
+## Supported Metrics
+You can get an up to date listing of the supported metrics by running the following code:
+```julia
+using Colocalization, Logging
+@info list_metrics()
+```
+or access the actual functions:
+```julia
+for (name, metric) in metrics_iterator()
+  @info name, metric
+end
+```
 
 ## In silico example
-spearman", "m2", "m1", "jaccard", "manders", "sorensen", "pearson"]
 Let's create 2 objects with variable levels of fluorescence labelling, that overlap by 50%.
 ```julia
-using ImageView, Images, Statistics, Distributions, SPECHT, Colocalization, ImageFiltering, Random
+using Images, Statistics, Distributions, Colocalization, ImageFiltering, Random
 X, Y = 100, 100
 xs = zeros(X, Y)
 ys = zeros(X, Y)
@@ -32,8 +42,17 @@ s2y .+= rand(100, 100) ./ 10
 ```
 View the results
 ```julia
+using SPECHT, ImageView
 imshow(mosaicview( [SPECHT.tcolors([xs, ys]), SPECHT.tcolors([sx, sy]), SPECHT.tcolors([s2x, s2y])], nrow=1))
 ```
+
+The visualzaition snippet uses SPECHT and Imageview, if you don't have them:
+```julia
+using Pkg
+Pkg.add("ImageView")
+Pkg.add(url="https//github.com/bencardoen/SPECHT.jl")
+```
+
 This should produce something like this image
 
 ![demo.png](demo.png)
@@ -85,6 +104,14 @@ using Pkg
 Pkg.instantiate()
 ```
 That's it.
+
+You can also add Colocalization as a package to your base or specific environment:
+```julia
+using Pkg
+# Optionally, activate your environment
+# Pkg.activate("path/to/your/environment")
+Pkg.add(url="https:://github.com/bencardoen/Colocalization.jl")
+```
 
 #### On Command line
 Let's say you have 2 image files `a.tif` and `b.tif`.

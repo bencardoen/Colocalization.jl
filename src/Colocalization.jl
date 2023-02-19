@@ -24,7 +24,7 @@ using Distributions
 using ImageFiltering
 using ImageMorphology
 
-export describe_array, intersection_mask, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization
+export describe_array, intersection_mask, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
 
 
 """
@@ -320,7 +320,25 @@ end
 
 metrics = Dict([("pearson", coloc_pearson), ("spearman", coloc_spearman), ("jaccard", coloc_jaccard), ("manders", coloc_manders), ("m1", coloc_m1), ("sorensen", coloc_sorensen), ("m2", coloc_m2)])
 
+"""
+	list_metrics()
 
+	Returns a list of the supported metrics
+"""
+function list_metrics()
+	return keys(metrics) |> collect
+end
+
+"""
+	metrics_iterator()
+
+	Returns an iterator over the supported metrics, in String / Function pairs.
+
+	Metric functions expect equal shaped array, and return a scalar value
+"""
+function metrics_iterator()
+	return pairs(copy(metrics))
+end
 
 """
 	spear(left, right)
