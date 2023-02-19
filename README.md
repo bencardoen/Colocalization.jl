@@ -11,10 +11,10 @@ I'll update as I come across more metrics.
 
 
 ## In silico example
-spearman", "m2", "m1", "jaccard", "manders", "sorensen", "pearson"]
+
 Let's create 2 objects with variable levels of fluorescence labelling, that overlap by 50%.
 ```julia
-using ImageView, Images, Statistics, Distributions, SPECHT, Colocalization, ImageFiltering, Random
+using ImageView, Images, Statistics, Distributions, Colocalization, ImageFiltering, Random
 X, Y = 100, 100
 xs = zeros(X, Y)
 ys = zeros(X, Y)
