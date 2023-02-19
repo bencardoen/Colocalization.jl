@@ -22,6 +22,7 @@ end
 ```
 
 ## In silico example
+
 Let's create 2 objects with variable levels of fluorescence labelling, that overlap by 50%.
 ```julia
 using Images, Statistics, Distributions, Colocalization, ImageFiltering, Random
