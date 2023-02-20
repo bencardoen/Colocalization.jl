@@ -16,7 +16,9 @@ Note that colocalization in superresolution microscopy has to be very carefully 
     2.1 [Supported Metrics](#metrics)
     
     2.2 [Demo](#demo)
-    
+
+    2.3 [Documentation](#docs)
+
 3. [Cite](#cite)
 4. [FAQ](#faq)
 5. [Related projects and tools](#related)
@@ -144,11 +146,14 @@ imshow(mv)
 Which should produce something like the below image.
 ![demo.png](resultseg.png)
 
-You can pass parameters, such as windowsize (default 3x3) to the function, please see their docstrings:
+<a name="docs"></a>
+### Documentation
+The documentation of the functions describes proper usage and meaning of parameters, to access it:
 ```julia
 using Colocalization
 ?colocalize_all
 ```
+The `?` key invokes Julia documentation, tools/IDES such as VSCode/Atom would have built in documentation panes.
 
  <a name="cite"></a>
 ## Cite
