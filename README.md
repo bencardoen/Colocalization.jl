@@ -10,12 +10,16 @@ Note that colocalization in superresolution microscopy has to be very carefully 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/bencardoen/Colocalization.jl/tree/main.svg?style=svg&circle-token=50ed75938474a05f8c9ed7343d9d6134131f5519)](https://dl.circleci.com/status-badge/redirect/gh/bencardoen/Colocalization.jl/tree/main) [![codecov](https://codecov.io/gh/bencardoen/Colocalization.jl/branch/main/graph/badge.svg?token=50R4ZYYY1V)](https://codecov.io/gh/bencardoen/Colocalization.jl) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7552357.svg)](https://doi.org/10.5281/zenodo.7552357)
 
 ## Table of contents
-1. [Installation](#install)
+1. [Installation](#installation)
 2. [Usage](#usage)
-  -  [Supported Metrics](#metrics)
-  -  [Demo](#demo)
+
+    2.1 [Supported Metrics](#metrics)
+    
+    2.2 [Demo](#demo)
+    
 3. [Cite](#cite)
-4. [Related projects and tools](#tools)
+4. [FAQ](#faq)
+5. [Related projects and tools](#related)
 
 
 <a name="installation"></a>
@@ -38,12 +42,13 @@ using Colocalization
 ```
 
 ### Cloning the repository
+This assumes you have [Git](https://git-scm.com/downloads) installed and configured.
 ```bash
 git clone https://github.com/bencardoen/Colocalization.jl.git
 cd Colocalization.jl
 julia --project=.
 ```
-in Julia
+Then, in Julia:
 ```julia
 using Pkg
 Pkg.instantiate()
@@ -175,3 +180,5 @@ Pkg.add("ImageView")
 FiJi:
 - [https://imagej.net/plugins/coloc-2](https://imagej.net/plugins/coloc-2)
 - [https://github.com/fiji/Colocalisation_Analysis](https://github.com/fiji/Colocalisation_Analysis)
+
+This package would not be possible with the [Julia Images ecosystem](https://juliaimages.org/latest/)
