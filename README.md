@@ -181,4 +181,4 @@ FiJi:
 - [https://imagej.net/plugins/coloc-2](https://imagej.net/plugins/coloc-2)
 - [https://github.com/fiji/Colocalisation_Analysis](https://github.com/fiji/Colocalisation_Analysis)
 
-This package would not be possible with the [Julia Images ecosystem](https://juliaimages.org/latest/)
+This package would not be possible without the [Julia Images ecosystem](https://juliaimages.org/latest/)
