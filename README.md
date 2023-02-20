@@ -22,6 +22,7 @@ Note that colocalization in superresolution microscopy has to be very carefully 
 3. [Cite](#cite)
 4. [FAQ](#faq)
 5. [Related projects and tools](#related)
+6. [Can you support metric X?](#support)
 
 
 <a name="installation"></a>
@@ -179,6 +180,7 @@ If you find this useful, consider citing:
 using Pkg
 Pkg.add("ImageView")
 ```
+If you have any problems or suggestions, please create an [issue](https://github.com/bencardoen/Colocalization.jl/issues/new/choose)
 
  <a name="related"></a>
 ## Related software
@@ -187,3 +189,7 @@ FiJi:
 - [https://github.com/fiji/Colocalisation_Analysis](https://github.com/fiji/Colocalisation_Analysis)
 
 This package would not be possible without the [Julia Images ecosystem](https://juliaimages.org/latest/)
+
+<a name="support"></a>
+## Can you support Metric X?
+Sure, please create an [issue](https://github.com/bencardoen/Colocalization.jl/issues/new/choose) describing the metric mathematically, ideally accompanied by the introducing paper.
