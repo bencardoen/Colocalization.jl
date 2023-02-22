@@ -29,6 +29,13 @@ using Logging
         end
         global_logger(c)
     end
+    
+    @testset "filter" begin      
+        m = zeros(10, 10)
+        m[4:6, 4:6] .= .12
+        mk = filter_projection(m, 1, 0)
+        sum(mk) == 1
+    end
 
     @testset "view" begin
         mt = list_metrics()

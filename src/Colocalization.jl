@@ -24,7 +24,7 @@ using Distributions
 using ImageFiltering
 using ImageMorphology
 
-export describe_array, intersection_mask, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
+export describe_array, intersection_mask, filter_projection, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
 
 
 """
@@ -48,6 +48,24 @@ function describe_array(xs)
     q1, q3, q95, q99 = quantile(xps, [0.25, 0.75, 0.95, 0.99])
     iqr = (q3-q1)/2
     return μ, md, σ, m, M, q1, q3, iqr, q95, q99, nans
+end
+
+"""
+	filter_projection(image, w=1, z=0)
+
+	Compute a 2-stage filtered mask based on image. w is the window size, z is the number of standard deviations to use as a threshold.
+	This removes isolated localizations of low intensity.
+"""
+function filter_projection(im,w=1, z=0)
+    # Source https://github.com/bencardoen/SPECHT.jl/blob/main/src/SPECHT.jl
+    μ , _,σ = describe_array(im)[1:3]
+    i1 = copy(im)
+    i1[i1 .< μ + z*σ] .= 0
+    mg= Images.mapwindow(Statistics.median, i1, [w*2+1 for _ in 1:length(size(im))])
+    mg[isnan.(mg)] .= zero(eltype(im))
+    mg= Images.mapwindow(Statistics.median, mg, [w*2+1 for _ in 1:length(size(im))])
+    mg[isnan.(mg)] .= zero(eltype(im))
+    return tomask(mg)
 end
 
 """
@@ -157,9 +175,14 @@ function colocalize_all(xs, ys; windowsize=3, metric=nothing)
     return res
 end
 
-function segment(img)
+"""
+	segment(image, scale=1.9)
+
+	Perform basic otsu thresholding. Scale argument allows you to include more (>1) background or less (<1)
+"""
+function segment(img, scale=1.0)
     rimg = copy(img)
-    t=otsu_threshold(rimg)
+    t=otsu_threshold(rimg) * scale
     rimg[rimg .< t] .=0
     return rimg
 end
