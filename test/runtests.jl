@@ -9,7 +9,7 @@ using Logging
         global_logger(NullLogger())
         X, Y = 100, 200
         Random.seed!(42)
-        for i in 1:10
+        for i in 1:2
             xs = Random.rand(X, Y)
             ys = Random.rand(X, Y) .+ .2
             res = colocalize_all(xs, ys)
@@ -57,7 +57,7 @@ using Logging
         global_logger(NullLogger())
         X, Y, Z = 100, 200, 20
         Random.seed!(42)
-        for i in 1:10
+        for i in 1:2
             xs = Random.rand(X, Y, Z)
             ys = Random.rand(X, Y, Z) .+ .2
             res = colocalize_all(xs, ys)

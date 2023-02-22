@@ -24,7 +24,7 @@ using Distributions
 using ImageFiltering
 using ImageMorphology
 
-export describe_array, intersection_mask, filter_projection, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
+export describe_array, intersection_mask, haussdorff_max, haussdorff_mean, haussdorff_distance, filter_projection, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
 
 
 """
@@ -66,6 +66,72 @@ function filter_projection(im,w=1, z=0)
     mg= Images.mapwindow(Statistics.median, mg, [w*2+1 for _ in 1:length(size(im))])
     mg[isnan.(mg)] .= zero(eltype(im))
     return tomask(mg)
+end
+
+"""
+	haussdorff_distance(xs, ys, aggregate=maximum)
+
+	Returns, for two segmented masks, the Haussdorff distance (per object).
+
+	Agg=maximum is the default, returns the maximum symmetric Euclidean distance of X to Y
+"""
+function _haussdorff_distance(A, B; agg=maximum)
+    distA = distance_transform(feature_transform(A .> 0));
+    @info eltype(distA)
+    d = zeros(size(B))
+    d .== Inf
+    if sum(A) == 0
+        return d
+    end
+    if sum(B) == 0
+        return d
+    end
+    idsB = component_indices(label_components(B))[2:end]
+    mBA = zeros(Float64, size(B))
+    for ind in idsB
+        mBA[ind] .= agg(distA[ind])
+    end
+    distB = distance_transform(feature_transform(B .> 0));
+    idsA = component_indices(label_components(A))[2:end]
+    mAB = zeros(size(B))
+    for ind in idsA
+        mAB[ind] .= agg(distB[ind])
+    end 
+    return mBA, mAB, max.(mBA, mAB)
+end
+
+
+"""
+	haussdorff_distance(xs, ys, aggregate=maximum)
+
+	Returns, for two segmented masks, the Haussdorff distance (per object).
+
+	Agg=maximum is the default, returns the maximum symmetric Euclidean distance of X to Y
+"""
+function haussdorff_distance(A, B; agg=maximum)
+    if sum(A) == 0
+        @warn "No pixels in A"
+        return Inf
+    end
+    if sum(B) == 0
+        @warn "No pixels in B"
+        return Inf
+    end
+    distA = distance_transform(feature_transform(A .> 0));
+    dAB = agg(distA[B .> 0])
+    distB = distance_transform(feature_transform(B .> 0));
+    dBA = agg(distB[A .> 0]) 
+    return max(dAB, dBA)
+end
+
+
+function haussdorff_max(xs, ys)
+	return haussdorff_distance(xs, ys, agg=maximum)
+end
+
+
+function haussdorff_mean(xs, ys)
+	return haussdorff_distance(xs, ys, agg=maximum)
 end
 
 """
@@ -341,7 +407,7 @@ function coloc_m2(xs, ys)
     sum(ys[xs .> 0])/sum(ys)
 end
 
-metrics = Dict([("pearson", coloc_pearson), ("spearman", coloc_spearman), ("jaccard", coloc_jaccard), ("manders", coloc_manders), ("m1", coloc_m1), ("sorensen", coloc_sorensen), ("m2", coloc_m2)])
+metrics = Dict([("pearson", coloc_pearson), ("spearman", coloc_spearman), ("jaccard", coloc_jaccard), ("manders", coloc_manders), ("m1", coloc_m1), ("sorensen", coloc_sorensen), ("m2", coloc_m2), ("haussdorff_max", haussdorff_max), ("haussdorff_mean", haussdorff_max)])
 
 """
 	list_metrics()
