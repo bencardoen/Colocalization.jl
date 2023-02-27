@@ -65,7 +65,7 @@ function filter_projection(im,w=1, z=0)
     mg[isnan.(mg)] .= zero(eltype(im))
     mg= Images.mapwindow(Statistics.median, mg, [w*2+1 for _ in 1:length(size(im))])
     mg[isnan.(mg)] .= zero(eltype(im))
-    return tomask(mg)
+    return tomask(im) .* tomask(mg) # Make sure we don't include FP
 end
 
 """
@@ -110,12 +110,12 @@ end
 """
 function haussdorff_distance(A, B; agg=maximum)
     if sum(A) == 0
-        @warn "No pixels in A"
-        return Inf
+        # @warn "No pixels in A"
+        return 0
     end
     if sum(B) == 0
-        @warn "No pixels in B"
-        return Inf
+        # @warn "No pixels in B"
+        return 0
     end
     distA = distance_transform(feature_transform(A .> 0));
     dAB = agg(distA[B .> 0])
@@ -125,11 +125,23 @@ function haussdorff_distance(A, B; agg=maximum)
 end
 
 
+"""
+	haussdorff_max(xs, ys)
+
+	The reference implementation for the Haussdorff distance, returns the maximum symmetric Euclidean distance of X to Y
+	See https://en.wikipedia.org/wiki/Hausdorff_distance
+"""
 function haussdorff_max(xs, ys)
 	return haussdorff_distance(xs, ys, agg=maximum)
 end
 
 
+"""
+	haussdorff_mean(xs, ys)
+
+	A variant of the Haussdorff distance, returns the mean symmetric Euclidean distance of X to Y
+	See https://en.wikipedia.org/wiki/Hausdorff_distance
+"""
 function haussdorff_mean(xs, ys)
 	return haussdorff_distance(xs, ys, agg=maximum)
 end

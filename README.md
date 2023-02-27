@@ -110,7 +110,7 @@ using SPECHT, ImageView
 imshow(mosaicview( [SPECHT.tcolors([xs, ys]), SPECHT.tcolors([sx, sy]), SPECHT.tcolors([s2x, s2y])], nrow=1))
 ```
 
-The visualzaition snippet uses SPECHT and Imageview, if you don't have them:
+The visualzation snippet uses SPECHT and Imageview, if you don't have them:
 ```julia
 using Pkg
 Pkg.add("ImageView")
