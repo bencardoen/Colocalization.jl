@@ -143,7 +143,7 @@ end
 	See https://en.wikipedia.org/wiki/Hausdorff_distance
 """
 function haussdorff_mean(xs, ys)
-	return haussdorff_distance(xs, ys, agg=maximum)
+	return haussdorff_distance(xs, ys, agg=mean)
 end
 
 """
