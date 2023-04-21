@@ -109,7 +109,7 @@ end
 	Agg=maximum is the default, returns the maximum symmetric Euclidean distance of X to Y
 """
 function haussdorff_distance(A, B; agg=maximum)
-	@info agg
+	#@info agg
     if sum(A) == 0
         # @warn "No pixels in A"
         return 0
