@@ -257,7 +257,7 @@ function colocalize_all(xs, ys; windowsize=3, metric=nothing)
 end
 
 """
-	segment(image, scale=1.9)
+	segment(image, scale=1.0)
 
 	Perform basic otsu thresholding. Scale argument allows you to include more (>1) background or less (<1)
 """
@@ -265,6 +265,7 @@ function segment(img, scale=1.0)
     rimg = copy(img)
     t=otsu_threshold(rimg) * scale
     rimg[rimg .< t] .=0
+    rimg[rimg .> 0] .=1
     return rimg
 end
 
