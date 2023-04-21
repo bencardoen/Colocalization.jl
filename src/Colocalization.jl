@@ -77,7 +77,7 @@ end
 """
 function _haussdorff_distance(A, B; agg=maximum)
     distA = distance_transform(feature_transform(A .> 0));
-    @info eltype(distA)
+    # @info eltype(distA)
     d = zeros(size(B))
     d .== Inf
     if sum(A) == 0
@@ -109,6 +109,7 @@ end
 	Agg=maximum is the default, returns the maximum symmetric Euclidean distance of X to Y
 """
 function haussdorff_distance(A, B; agg=maximum)
+	@info agg
     if sum(A) == 0
         # @warn "No pixels in A"
         return 0
@@ -132,6 +133,7 @@ end
 	See https://en.wikipedia.org/wiki/Hausdorff_distance
 """
 function haussdorff_max(xs, ys)
+	# @info "max"
 	return haussdorff_distance(xs, ys, agg=maximum)
 end
 
@@ -143,6 +145,7 @@ end
 	See https://en.wikipedia.org/wiki/Hausdorff_distance
 """
 function haussdorff_mean(xs, ys)
+	# @info "mean"
 	return haussdorff_distance(xs, ys, agg=mean)
 end
 
@@ -419,7 +422,7 @@ function coloc_m2(xs, ys)
     sum(ys[xs .> 0])/sum(ys)
 end
 
-metrics = Dict([("pearson", coloc_pearson), ("spearman", coloc_spearman), ("jaccard", coloc_jaccard), ("manders", coloc_manders), ("m1", coloc_m1), ("sorensen", coloc_sorensen), ("m2", coloc_m2), ("haussdorff_max", haussdorff_max), ("haussdorff_mean", haussdorff_max)])
+metrics = Dict([("pearson", coloc_pearson), ("spearman", coloc_spearman), ("jaccard", coloc_jaccard), ("manders", coloc_manders), ("m1", coloc_m1), ("sorensen", coloc_sorensen), ("m2", coloc_m2), ("haussdorff_max", haussdorff_max), ("haussdorff_mean", haussdorff_mean)])
 
 """
 	list_metrics()

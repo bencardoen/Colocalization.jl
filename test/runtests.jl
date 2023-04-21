@@ -29,6 +29,21 @@ using Logging
         end
         global_logger(c)
     end
+
+    @testset "agghd" begin
+        Random.seed!(42)
+        c = global_logger()
+        global_logger(NullLogger())
+        X, Y = 100, 200
+        xs = Random.rand(X, Y)
+        ys = Random.rand(X, Y) .+ .2
+        xs[xs .< 0.2] .= 0
+        ys[ys .< 0.2] .= 0
+        HM = colocalize(xs, ys; metric="haussdorff_max")
+        Hm = colocalize(xs, ys; metric="haussdorff_mean")
+        @test !all(HM .== Hm)
+        global_logger(c)
+    end
     
     @testset "filter" begin      
         m = zeros(10, 10)
