@@ -261,12 +261,34 @@ end
 
 	Perform basic otsu thresholding. Scale argument allows you to include more (>1) background or less (<1)
 """
-function segment(img, scale=1.0)
-    rimg = copy(img)
-    t=otsu_threshold(rimg) * scale
-    rimg[rimg .< t] .=0
-    rimg[rimg .> 0] .=1
-    return rimg
+function segment(img, scale=1.0; method="otsu")
+	if method == "otsu"
+		rimg = copy(img)
+		t=otsu_threshold(rimg) * scale
+		rimg[rimg .< t] .=0
+		rimg[rimg .> 0] .=1
+		return rimg
+	end
+	if method == "specht"
+		return segment_specht(img, scale)
+	end
+	raise(ArgumentError("Invalid method $method"))
+end
+
+
+function segment_specht(img, prc=2, sigmas=[2,2])
+    #Reused with permission from https://github.com/bencardoen/SPECHT.jl/blob/main/src/SPECHT.jl
+    _, _, _, imgl = glg(img, sigmas); 
+    Tg, neg_glog = find_th(imgl, 0, true, 2); 
+    ngl = rlap(imgl)
+    i2 = copy(img)
+    i2[ngl .< Tg] .= zero(eltype(img))
+    i2[ngl .>= Tg] .= oneunit(eltype(img))
+    i2[1:3,:].=0
+    i2[:,1:3].=0
+    i2[end-2:end,:].=0
+    i2[:,end-2:end].=0
+    return i2
 end
 
 """
