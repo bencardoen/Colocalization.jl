@@ -24,7 +24,7 @@ using Distributions
 using ImageFiltering
 using ImageMorphology
 
-export describe_array, intersection_mask, haussdorff_max, haussdorff_mean, haussdorff_distance, filter_projection, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
+export describe_array, intersection_mask, haussdorff_max, haussdorff_mean, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
 
 
 """

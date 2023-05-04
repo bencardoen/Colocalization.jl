@@ -131,6 +131,7 @@ using Logging
         @test all(img0 .== zero(eltype(img1)))
         @test all(img1 .== img2)
     end
+
     @testset "full_coloc" begin
         X = zeros(10, 10)
         Y = zeros(10, 10)
@@ -141,6 +142,15 @@ using Logging
         Y[5:7, 5:7].=1
         @test sum(union_mask(X, Y)) == 14
         @test sum(intersection_mask(X, Y)) == 4
+    end
+
+    @testset "objectstats" begin
+        A = zeros(10, 10)
+        B = zeros(10, 10)
+        A[2, 3] = 1
+        B[7,8] = 1
+        df = object_stats(A, B, nothing)
+        @test size(df) == (2, 5)
     end
 
     @testset "df" begin
