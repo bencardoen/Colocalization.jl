@@ -125,6 +125,49 @@ function haussdorff_distance(A, B; agg=maximum)
     return max(dAB, dBA)
 end
 
+function _rlap(lap)
+	# Reused from SPCHT
+    return _rlap!(copy(lap))
+end
+
+function _rlap!(lap)
+	# Reused from SPECHT
+	z = zero(eltype(lap))
+	_f = x ->  x < z ? -x : z
+	return map!(_f, lap, lap)
+end
+
+function _find_th(imgl, Z, auto=false, scale=1, edgemask=nothing)
+	negl = _rlap(imgl)
+	if ! isnothing(edgemask)
+		@debug "Using edgemask"
+		@assert size(edgemask) == size(imgl)
+		negl[edgemask .> 0 ] .= 0
+	end
+    Zp = Z
+	avals = Float64.(negl[:])
+    if auto == true
+		kurt = Distributions.kurtosis(avals)
+        Zp = kurt^(.25)/scale
+        @debug "Using self scaling Z of $(Zp)"
+    end
+    gem, ges = _gmsm(avals)
+    Tg = gem * ges^Zp
+    return Tg, negl
+end
+
+
+function _gmsm(vs)
+    # Reused from ERGO with permission
+	vals = copy(vs)
+    vals = vals[vals .> zero(eltype(vals))]
+    N = length(vals)
+    li = [log(i) for i in vals]
+    gm = exp(sum(li) / N)
+    gs = exp(sqrt(sum([log(i/gm)^2 for i in vals])/N))
+    return gm, gs
+end
+
 
 """
 	haussdorff_max(xs, ys)
@@ -275,12 +318,27 @@ function segment(img, scale=1.0; method="otsu")
 	raise(ArgumentError("Invalid method $method"))
 end
 
+function _glg(img, sigmas)
+    @assert(length(sigmas)==2)
+    imgg = img
+    if sigmas[1] != 0
+        imgg = ImageFiltering.imfilter(img, ImageFiltering.Kernel.gaussian(sigmas[1]));
+    end
+    # imgg = img
+    imgl = ImageFiltering.imfilter(imgg, ImageFiltering.Kernel.Laplacian());
+    imglg = imgl
+    if sigmas[2] != 0
+        imglg = ImageFiltering.imfilter(imgl, ImageFiltering.Kernel.gaussian(sigmas[2]));
+    end
+    return img, imgg, imgl, imglg
+end
+
 
 function segment_specht(img, prc=2, sigmas=[2,2])
     #Reused with permission from https://github.com/bencardoen/SPECHT.jl/blob/main/src/SPECHT.jl
-    _, _, _, imgl = glg(img, sigmas); 
-    Tg, neg_glog = find_th(imgl, 0, true, 2); 
-    ngl = rlap(imgl)
+    _, _, _, imgl = _glg(img, sigmas); 
+    Tg, neg_glog = _find_th(imgl, 0, true, 2); 
+    ngl = _rlap(imgl)
     i2 = copy(img)
     i2[ngl .< Tg] .= zero(eltype(img))
     i2[ngl .>= Tg] .= oneunit(eltype(img))
@@ -289,6 +347,49 @@ function segment_specht(img, prc=2, sigmas=[2,2])
     i2[end-2:end,:].=0
     i2[:,end-2:end].=0
     return i2
+end
+
+function object_stats(i1, i2, context)
+    m1= tomask(i1)
+    m2= tomask(i2)
+    c1 = Images.label_components(m1)
+    c2 = Images.label_components(m2)
+    disc1_c2 = compute_distances_cc_to_mask(c1, m2)
+    disc2_c1 = compute_distances_cc_to_mask(c2, m1)
+    c1stats = describe_cc(c1, i1)
+    c2stats = describe_cc(c2, i2)
+    df1 = DataFrame(channel=1, distance_to_nearest=disc1_c2, area=Images.component_lengths(c1)[2:end], mean=c1stats[:,1], std=c1stats[:,2])
+    df2 = DataFrame(channel=2, distance_to_nearest=disc2_c1, area=Images.component_lengths(c2)[2:end], mean=c2stats[:,1], std=c2stats[:,2])
+    return vcat(df1, df2)
+end
+
+
+function describe_cc(ccs, img)
+    N = maximum(ccs)
+    dis = zeros(N, 2)
+    for (i, ci) in enumerate(component_indices(ccs)[2:end])
+        im = img[ci]
+        dis[i, :] .= mean(im), std(im)
+    end
+    return dis
+end
+
+
+
+function compute_distances_cc_to_mask(from_cc, to_mask)
+    # reused from SPECHT https://github.com/bencardoen/SPECHT.jl/blob/main/src/SPECHT.jl
+    @assert(size(from_cc) == size(to_mask))
+    dismap = Images.distance_transform(Images.feature_transform(Bool.(to_mask)))
+    N = Int(maximum(from_cc))
+    @info N
+    dis = zeros(N)
+    ind = Images.component_indices(from_cc)[2:end]
+    for i in 1:N
+        @inbounds dis[i] = minimum(dismap[ind[i]])
+    end
+    @assert(all(dis .>= 0))
+	@debug "Distances $N"
+    return dis
 end
 
 """

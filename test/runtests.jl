@@ -66,6 +66,8 @@ using Logging
         s = rand(100, 100)
         sm = segment(s)
         @test sum(s) != sum(sm)
+        sm = segment(s; method="specht")
+        @test sum(s) != sum(sm)
     end
 
     @testset "Coloc3d" begin
