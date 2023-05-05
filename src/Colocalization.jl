@@ -354,13 +354,13 @@ function object_stats(i1, i2, context)
     m2= tomask(i2)
     c1 = Images.label_components(m1)
     c2 = Images.label_components(m2)
-    disc1_c2 = compute_distances_cc_to_mask(c1, m2)
-    disc2_c1 = compute_distances_cc_to_mask(c2, m1)
+    disc1_c2, d1map = compute_distances_cc_to_mask(c1, m2)
+    disc2_c1, d2map  = compute_distances_cc_to_mask(c2, m1)
     c1stats = describe_cc(c1, i1)
     c2stats = describe_cc(c2, i2)
     df1 = DataFrame(channel=1, distance_to_nearest=disc1_c2, area=Images.component_lengths(c1)[2:end], mean=c1stats[:,1], std=c1stats[:,2])
     df2 = DataFrame(channel=2, distance_to_nearest=disc2_c1, area=Images.component_lengths(c2)[2:end], mean=c2stats[:,1], std=c2stats[:,2])
-    return vcat(df1, df2)
+    return vcat(df1, df2), d1map, d2map
 end
 
 
@@ -383,13 +383,17 @@ function compute_distances_cc_to_mask(from_cc, to_mask)
     N = Int(maximum(from_cc))
     @info N
     dis = zeros(N)
+	dismap = zeros(Float64, size(to_mask))
     ind = Images.component_indices(from_cc)[2:end]
     for i in 1:N
-        @inbounds dis[i] = minimum(dismap[ind[i]])
+		mi = minimum(dismap[ind[i]])
+		dis[i] = mi
+		dismap[ind[i]] .= mi
+        # @inbounds dis[i] = minimum(dismap[ind[i]])
     end
     @assert(all(dis .>= 0))
 	@debug "Distances $N"
-    return dis
+    return dis, dismap
 end
 
 """
