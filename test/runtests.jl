@@ -150,7 +150,7 @@ using Logging
         A[2, 3] = 1
         B[7,8] = 1
         df, d1m, d2m = object_stats(A, B, nothing)
-        @test size(df) == (2, 5)
+        @test size(df) == (2, 6)
     end
 
     @testset "df" begin
