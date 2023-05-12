@@ -337,7 +337,7 @@ end
 function segment_specht(img, prc=2, sigmas=[2,2])
     #Reused with permission from https://github.com/bencardoen/SPECHT.jl/blob/main/src/SPECHT.jl
     _, _, _, imgl = _glg(img, sigmas); 
-    Tg, neg_glog = _find_th(imgl, 0, true, 2); 
+    Tg, neg_glog = _find_th(imgl, 0, true, prc); 
     ngl = _rlap(imgl)
     i2 = copy(img)
     i2[ngl .< Tg] .= zero(eltype(img))
