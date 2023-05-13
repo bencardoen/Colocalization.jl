@@ -386,7 +386,7 @@ function compute_distances_cc_to_mask(from_cc, to_mask)
 	@assert(size(from_cc) == size(to_mask))
     dismap = Images.distance_transform(Images.feature_transform(Bool.(to_mask)))
     N = Int(maximum(from_cc))
-    @info N
+    @info "Total of $N objects to compute distance for"
     dis = zeros(N)
 	overlap = zeros(N)
 	distmap = zeros(Float64, size(to_mask))
