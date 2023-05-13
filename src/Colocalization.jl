@@ -394,8 +394,8 @@ function compute_distances_cc_to_mask(from_cc, to_mask)
     for i in 1:N
         # @info i
 		mi = minimum(dismap[ind[i]])
-		dis[i] = max(mi, 0.1)
-		distmap[ind[i]] .= mi
+		dis[i] = mi
+		distmap[ind[i]] .= max(mi, 0.1)
 		overlap[i] = sum(to_mask[ind[i]])
         # @inbounds dis[i] = minimum(dismap[ind[i]])
     end
