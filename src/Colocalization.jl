@@ -375,7 +375,12 @@ function describe_cc(ccs, img)
 end
 
 
-
+"""
+	compute_distances_cc_to_mask(from_cc, to_mask)
+	
+	Compute distances, overlap, and a distance map from a component map to a mask.
+	The distance map has a token 0.1 if the distance = 0 to prevent occlusion with background.
+"""
 function compute_distances_cc_to_mask(from_cc, to_mask)
     # reused from SPECHT https://github.com/bencardoen/SPECHT.jl/blob/main/src/SPECHT.jl
 	@assert(size(from_cc) == size(to_mask))
@@ -389,7 +394,7 @@ function compute_distances_cc_to_mask(from_cc, to_mask)
     for i in 1:N
         # @info i
 		mi = minimum(dismap[ind[i]])
-		dis[i] = mi
+		dis[i] = max(mi, 0.1)
 		distmap[ind[i]] .= mi
 		overlap[i] = sum(to_mask[ind[i]])
         # @inbounds dis[i] = minimum(dismap[ind[i]])
