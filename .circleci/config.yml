@@ -12,7 +12,7 @@ jobs:
       - run: apt update
       - run: apt install python3 -y
       - run: apt install python3-pip -y
-      - run: pip3 install smlmvis
+      - run: pip3 install smlmvis --break-system-packages
       - run:
           command: julia -e 'using Pkg; Pkg.add("Coverage");  Pkg.add(url="https://github.com/bencardoen/Colocalization.jl.git"); Pkg.test("Colocalization", coverage=true)'
       - run:
