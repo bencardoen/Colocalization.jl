@@ -1,7 +1,7 @@
 name = "Colocalization"
 uuid = "5deedb61-f8ac-43ca-82f0-d70c51e04289"
 authors = ["Ben Cardoen <26388277+bencardoen@users.noreply.github.com> and contributors"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
@@ -17,7 +17,6 @@ Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 LoggingExtras = "e6f89c97-d47a-5376-807f-9c37f3926c36"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
@@ -29,11 +28,10 @@ Distributions = "0.25.80"
 ImageFiltering = "0.7.3"
 ImageMorphology = "0.3.2"
 ImageSegmentation = "1.7.0"
-Images = "0.25.2"
+Images = "0.25.3"
 LoggingExtras = "1.0.0"
 ProgressMeter = "1.7.2"
 julia = "1.7"
-Revise = "3.5.2"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
