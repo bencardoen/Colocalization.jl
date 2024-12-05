@@ -68,6 +68,24 @@ julia --project=. scripts/colocalize.jl -f a.tif -s b.tif --outdir . --segment -
 <a name="usage"></a>
 ## Usage
 
+### Point cloud
+```julia
+julia scripts/colocalize_pointcloud.jl --first 1st.mat --second 2nd.mat --outdir "X"
+```
+This reads in SuperResNet files (MAT format) of two channels, 3D localizations.
+The output will be a CSV file where each row describes the colocalization of **1** cluster in channel x to **5** clusters to channel y.
+The columns are:
+- channel: e.g. 1, 2
+- channel name: the corresponding filename
+- clusterid : this is the integer identifier used for this cluster in SRN
+- centroid_{x,y,z} : the centroid location of this cluster
+- distance_{1-5} : The distances to the nearest 5 objects in the other channel
+- nearest_{1-5} : The cluster ids to the nearest 5 objects in the other channel
+- channel_centroid_{x,y,z} : The centroid of **this** channel
+- distance_to_centroid: the distance of this object's centroid to the channel's centroid (~ density/topology)
+
+### Voxel 
+
 <a name="metrics"></a>
 ### Supported Metrics 
 
