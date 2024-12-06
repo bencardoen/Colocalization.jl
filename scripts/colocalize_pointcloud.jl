@@ -24,8 +24,20 @@ using LoggingExtras
 using Colocalization
 using Images
 
-# f1 = "/home/bcardoen/cedar_data/mattest/two_channel_mat/abbelight/CavPTRF_2_2_Cav_647_merged_threshold_0_alpha_3.mat"
-# f2 = "//home/bcardoen/cedar_data/mattest/two_channel_mat/abbelight/CavPTRF_2_2_PTRF_680_merged_threshold_0_alpha_3.mat"
+f1 = "/home/bcardoen/cedar_data/mattest/two_channel_mat/abbelight/CavPTRF_2_2_Cav_647_merged_threshold_0_alpha_3.mat"
+f2 = "//home/bcardoen/cedar_data/mattest/two_channel_mat/abbelight/CavPTRF_2_2_PTRF_680_merged_threshold_0_alpha_3.mat"
+
+
+
+
+# _coloc_srn(f1, f2)
+
+#
+# c = CSV.read("/home/bcardoen/Downloads/feature csv/abbelight_csv/CavPTRF_2_2_Cav_647_merged_threshold_0_alpha_3_cluster_features.csv", DataFrame)
+# names(c)
+
+
+
 
 
 

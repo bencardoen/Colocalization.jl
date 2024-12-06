@@ -31,6 +31,7 @@ export describe_array, intersection_mask, haussdorff_max, haussdorff_mean, coloc
 
 	Return a dataframe with the distances, for each centroid in channel 1, to each centroid in channel 2.
 """
+
 function report_distances(ctrs1, ctrs2, channel_ctr1)
     df = DataFrame(clusterid1 = Int[], centroid_x=Float64[], centroid_y=Float64[], centroid_z=Float64[], 
     distance_1 = Float64[], distance_2 = Float64[], distance_3 = Float64[], distance_4 = Float64[], distance_5 = Float64[], 
@@ -48,52 +49,62 @@ function report_distances(ctrs1, ctrs2, channel_ctr1)
     return df
 end
 
-function compute_centroids(ps, cs, minsize=5)
+function compute_centroids(ps, cs, minsize=4)
     CN = size(cs, 1)
     centroids = zeros(CN, 3)
     segments = Dict()
     lengths = zeros(CN)
+    radii = zeros(CN)
+    toosmall=0
     for i in 1:CN
         ip = Int.(cs[i])
         ni = length(ip)
         lengths[i] = ni
         if ni < minsize
-            @warn "Have < $minsize points for cluster $i"
+            @debug "Have < $minsize points for cluster $i"
+            toosmall+=1
+            continue
         end
-        if ni < 2
-            ip = ip
-        else
-            ip = ip[:]
-        end
+        ip = ip[:]
         ipcoords = ps[ip, :]
+        radii[i]=radius_points(ipcoords)
         segments[i] = ipcoords
         centroids[i, :] .= mean(ipcoords, dims=1)[1,:]
     end
-    return centroids, segments, lengths
+    @info "Dropped $(toosmall/CN *100) % of clusters < $minsize"
+    return centroids, segments, lengths, radii
 end
 
 function load_SRN(matfile)
+    @info "Reading $matfile"
     data = matread(matfile)
     cluster_to_class = data["clstClass"]
     points=data["DatFiltered"]
     clustercount = size(cluster_to_class, 2)
+    @info "Ttoal of $p2c clusters (unfiltered)"
     p2c = data["point2cluster"]
     c2p = data["clustMembsCell"]
     return p2c, c2p, clustercount, points, cluster_to_class
 end
 
-function coloc_srn(f1, f2)
+function coloc_srn(f1, f2; SRN_minpoints=4)
     p2c1, c2p1, clustercount1, points1, cluster_to_class1 = load_SRN(f1)
-    ctrs1, segs1, L1 = compute_centroids(points1, c2p1)
+    ctrs1, segs1, L1, R1 = compute_centroids(points1, c2p1, SRN_minpoints)
+    ctrs1 = ctrs1[L1 .>= SRN_minpoints, :]
+    R1 = R1[L1 .>= SRN_minpoints]
     channel_ctr1 = mean(ctrs1, dims=1)[:]
     p2c2, c2p2, clustercount2, points2, cluster_to_class2 = load_SRN(f2)
-    ctrs2, segs2, L2 = compute_centroids(points2, c2p2)
+    ctrs2, segs2, L2, R2 = compute_centroids(points2, c2p2, SRN_minpoints)
+    ctrs2 = ctrs2[L2 .>= SRN_minpoints, :]
+    R2 = R2[L2 .>= SRN_minpoints]
     channel_ctr2 = mean(ctrs2, dims=1)[:]
     df12 = report_distances(ctrs1, ctrs2, channel_ctr1)
     df21 = report_distances(ctrs2, ctrs1, channel_ctr2)
     df12[!,:channel].=1
+    df12[!,:radius] .= R1
     df12[!,:channelfile].=f1
     df21[!,:channel].=2
+    df21[!,:radius] .= R2
     df21[!,:channelfile].=f2
     dfx=vcat([df12, df21]...)
     return dfx
