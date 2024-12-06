@@ -83,6 +83,7 @@ The columns are:
 - nearest_{1-5} : The cluster ids to the nearest 5 objects in the other channel
 - channel_centroid_{x,y,z} : The centroid of **this** channel
 - distance_to_centroid: the distance of this object's centroid to the channel's centroid (~ density/topology)
+- radius: This is the radius of the circumscribed sphere of this cluster. If, for two clusters, you have R1 and R2 as radii, and their centroid to centroid distance is D12, then you can detect `overlap` = D12 < R1 + R2. This is an approximate measure, as the cluster can have weird shapes that skew the size of the circumscribed circle. 
 
 ### Voxel 
 

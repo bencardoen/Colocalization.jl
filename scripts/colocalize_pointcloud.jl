@@ -24,22 +24,6 @@ using LoggingExtras
 using Colocalization
 using Images
 
-f1 = "/home/bcardoen/cedar_data/mattest/two_channel_mat/abbelight/CavPTRF_2_2_Cav_647_merged_threshold_0_alpha_3.mat"
-f2 = "//home/bcardoen/cedar_data/mattest/two_channel_mat/abbelight/CavPTRF_2_2_PTRF_680_merged_threshold_0_alpha_3.mat"
-
-
-
-
-# _coloc_srn(f1, f2)
-
-#
-# c = CSV.read("/home/bcardoen/Downloads/feature csv/abbelight_csv/CavPTRF_2_2_Cav_647_merged_threshold_0_alpha_3_cluster_features.csv", DataFrame)
-# names(c)
-
-
-
-
-
 
 function parse_commandline()
     s = ArgParseSettings()
@@ -57,6 +41,10 @@ function parse_commandline()
             help = "output folder"
             arg_type = String
             required = true
+        "--mincluster", "-m"
+            help = "Minimum size of cluster (nr of points). Default to 4, NEVER set < 4. Should correspond to SRN choice."
+            arg_type = Int
+            default = 4
     end
 
     return parse_args(s)
@@ -82,7 +70,7 @@ function runcoloc()
 		return
 	end
     @info "Starting Colocalization"
-	df = coloc_srn(first, second)
+	df = coloc_srn(first, second; SRN_minpoints=parsed_args["mincluster"])
     @info "Done... saving to CSV: $(joinpath(outdir, "results.csv"))"
 	CSV.write(joinpath(outdir, "results.csv"), df)
 	@info "Done"

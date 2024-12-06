@@ -22,6 +22,7 @@ using ProgressMeter
 using Images
 using Distributions
 using ImageFiltering
+using MAT
 using ImageMorphology
 
 export describe_array, intersection_mask, haussdorff_max, haussdorff_mean, coloc_srn, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
@@ -81,7 +82,7 @@ function load_SRN(matfile)
     cluster_to_class = data["clstClass"]
     points=data["DatFiltered"]
     clustercount = size(cluster_to_class, 2)
-    @info "Ttoal of $p2c clusters (unfiltered)"
+    @info "Total of $clustercount clusters (unfiltered)"
     p2c = data["point2cluster"]
     c2p = data["clustMembsCell"]
     return p2c, c2p, clustercount, points, cluster_to_class
@@ -183,6 +184,16 @@ function _haussdorff_distance(A, B; agg=maximum)
     return mBA, mAB, max.(mBA, mAB)
 end
 
+
+function radius_points(points)
+    x, X = minimum(points[:, 1]), maximum(points[:, 1])
+    y, Y = minimum(points[:, 2]), maximum(points[:, 2])
+    z, Z = minimum(points[:, 3]), maximum(points[:, 3])
+    xe = X-x
+    ye = Y-y
+    ze = Z-z
+    return Float64(sqrt((xe/2)^2 + (ye/2)^2 + (ze/2)^2))
+end
 
 """
 	haussdorff_distance(xs, ys, aggregate=maximum)
