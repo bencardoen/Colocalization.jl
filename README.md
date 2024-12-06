@@ -13,11 +13,15 @@ Note that colocalization in superresolution microscopy has to be very carefully 
 1. [Installation](#installation)
 2. [Usage](#usage)
 
-    2.1 [Supported Metrics](#metrics)
-    
-    2.2 [Demo](#demo)
+    2.0 [Point Clouds](#pc)
 
-    2.3 [Documentation](#docs)
+    2.0 [Voxel based data](#vx)
+
+        2.1 [Supported Metrics](#metrics)
+        
+        2.2 [Demo](#demo)
+
+        2.3 [Documentation](#docs)
 
 3. [Cite](#cite)
 4. [FAQ](#faq)
@@ -68,6 +72,7 @@ julia --project=. scripts/colocalize.jl -f a.tif -s b.tif --outdir . --segment -
 <a name="usage"></a>
 ## Usage
 
+<a name="pc"></a>
 ### Point cloud
 ```julia
 julia scripts/colocalize_pointcloud.jl --first 1st.mat --second 2nd.mat --outdir "X"
@@ -85,6 +90,7 @@ The columns are:
 - distance_to_centroid: the distance of this object's centroid to the channel's centroid (~ density/topology)
 - radius: This is the radius of the circumscribed sphere of this cluster. If, for two clusters, you have R1 and R2 as radii, and their centroid to centroid distance is D12, then you can detect `overlap` = D12 < R1 + R2. This is an approximate measure, as the cluster can have weird shapes that skew the size of the circumscribed circle. 
 
+<a name="vx"></a>
 ### Voxel 
 
 <a name="metrics"></a>
