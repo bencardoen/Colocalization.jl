@@ -32,7 +32,7 @@ Note that colocalization in superresolution microscopy has to be very carefully 
 <a name="installation"></a>
 ## Installation
 - Download [Julia](https://julialang.org/learning/getting-started/)
-
+- [Julia + VSCode](https://blog.glcs.io/install-julia-and-vscode#heading-installing-a-specific-julia-version)
 
 ### Using as a package
 Start Julia (in VSCode or Command line)
