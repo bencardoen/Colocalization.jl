@@ -25,7 +25,7 @@ using ImageFiltering
 using MAT
 using ImageMorphology
 
-export describe_array, intersection_mask, haussdorff_max, haussdorff_mean, coloc_srn, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
+export describe_array, intersection_mask, haussdorff_max, haussdorff_mean, coloc_srn, load_SRN, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
 
 """
 	report_distances(ctrs1, ctrs2, channel_ctr1)

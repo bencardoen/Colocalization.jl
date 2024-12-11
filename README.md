@@ -33,7 +33,9 @@ Note that colocalization in superresolution microscopy has to be very carefully 
 ## Installation
 - Download [Julia](https://julialang.org/learning/getting-started/)
 - [Julia + VSCode](https://blog.glcs.io/install-julia-and-vscode#heading-installing-a-specific-julia-version)
-
+- Open a new VSCode window
+- In the terminal, type `git clone https://github.com/bencardoen/Colocalization.jl.git` 
+- change directory to `Colocalization.jl` which will now be a subdirectory
 ### Using as a package
 Start Julia (in VSCode or Command line)
 ```bash
@@ -89,6 +91,21 @@ The columns are:
 - channel_centroid_{x,y,z} : The centroid of **this** channel
 - distance_to_centroid: the distance of this object's centroid to the channel's centroid (~ density/topology)
 - radius: This is the radius of the circumscribed sphere of this cluster. If, for two clusters, you have R1 and R2 as radii, and their centroid to centroid distance is D12, then you can detect `overlap` = D12 < R1 + R2. This is an approximate measure, as the cluster can have weird shapes that skew the size of the circumscribed circle. 
+
+#### SRN Specific data
+You can extract specific fields from the SRN MAT file.
+Start julia
+```bash
+julia --project=.
+```
+Then, for example to read the 3D points of the clusters, you can do
+
+```julia
+using Colocalization
+data = load_SRN("file.mat")
+points = data[4]
+CSV.write("3D-points.csv", DataFrame(points, ["X", "Y", "Z"]))
+```
 
 <a name="vx"></a>
 ### Voxel 
