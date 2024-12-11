@@ -75,7 +75,7 @@ julia --project=. scripts/colocalize.jl -f a.tif -s b.tif --outdir . --segment -
 <a name="pc"></a>
 ### Point cloud
 ```julia
-julia scripts/colocalize_pointcloud.jl --first 1st.mat --second 2nd.mat --outdir "X"
+julia --project=. scripts/colocalize_pointcloud.jl --first 1st.mat --second 2nd.mat --outdir "X"
 ```
 This reads in SuperResNet files (MAT format) of two channels, 3D localizations.
 The output will be a CSV file where each row describes the colocalization of **1** cluster in channel x to **5** clusters to channel y.
