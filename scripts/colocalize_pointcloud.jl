@@ -38,9 +38,10 @@ function parse_commandline()
             arg_type = String
             required = true
 		"--outdir", "-o"
-            help = "output folder"
+            help = "output folder, default to current directory"
             arg_type = String
-            required = true
+            default = ""
+            required = false
         "--mincluster", "-m"
             help = "Minimum size of cluster (nr of points). Default to 4, NEVER set < 4. Should correspond to SRN choice."
             arg_type = Int
@@ -65,14 +66,24 @@ function runcoloc()
 	first = parsed_args["first"]
 	second = parsed_args["second"]
 	outdir = parsed_args["outdir"]
+    if outdir == ""
+        @info "No output directory given, working in current directory $(pwd())"
+        outdir = pwd()
+    end
 	if ! all(isfile.([first, second]))
 		@error "Missing files $first $second"
 		return
 	end
+    f = splitext(splitpath(first)[end])[1]
+    s = splitext(splitpath(second)[end])[1]
+    outname = "$(f)___$(s)"
+    if length(outname) > 255
+        @warn "Output name probably too long ..."
+    end
     @info "Starting Colocalization"
 	df = coloc_srn(first, second; SRN_minpoints=parsed_args["mincluster"])
-    @info "Done... saving to CSV: $(joinpath(outdir, "results.csv"))"
-	CSV.write(joinpath(outdir, "results.csv"), df)
+    @info "Done... saving to CSV: $(joinpath(outdir, "$(outname).csv"))"
+	CSV.write(joinpath(outdir, "$(outname).csv"), df)
 	@info "Done"
 end
 
