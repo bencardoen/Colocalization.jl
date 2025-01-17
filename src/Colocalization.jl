@@ -115,11 +115,11 @@ function coloc_srn(f1, f2; SRN_minpoints=4)
     @info "Computing interaction fraction 1->2"
     corresponding12=df21[df12.nearest_1,:]
     fraction_interact12 = df12.distance_1 ./ (df12.radius .+ corresponding12.radius)
-    df12[!,:interaction_fract] .= fraction_interact12
+    df12[!,:interaction_fraction] .= fraction_interact12
     corresponding21=df12[df21.nearest_1,:]
     @info "Computing interaction fraction 2->1"
     fraction_interact21 = df21.distance_1 ./ (df21.radius .+ corresponding21.radius)
-    df21[!,:interaction_fract] .= fraction_interact21
+    df21[!,:interaction_fraction] .= fraction_interact21
     dfx=vcat([df12, df21]...)
     return dfx
 end
