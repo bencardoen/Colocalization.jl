@@ -25,7 +25,7 @@ using ImageFiltering
 using MAT
 using ImageMorphology
 
-export describe_array, intersection_mask, haussdorff_max, haussdorff_mean, coloc_srn, load_SRN, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
+export describe_array, intersection_mask, haussdorff_max, compute_centroids, report_distances, haussdorff_mean, coloc_srn, load_SRN, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
 
 """
 	report_distances(ctrs1, ctrs2, channel_ctr1)
@@ -85,16 +85,17 @@ function load_SRN(matfile)
     @info "Total of $clustercount clusters (unfiltered)"
     p2c = data["point2cluster"]
     c2p = data["clustMembsCell"]
-    return p2c, c2p, clustercount, points, cluster_to_class
+    fts = data["clustFeatures"]
+    return p2c, c2p, clustercount, points, cluster_to_class, fts
 end
 
 function coloc_srn(f1, f2; SRN_minpoints=4)
-    p2c1, c2p1, clustercount1, points1, cluster_to_class1 = load_SRN(f1)
+    p2c1, c2p1, clustercount1, points1, cluster_to_class1, fts1 = load_SRN(f1)
     ctrs1, segs1, L1, R1 = compute_centroids(points1, c2p1, SRN_minpoints)
     ctrs1 = ctrs1[L1 .>= SRN_minpoints, :]
     R1 = R1[L1 .>= SRN_minpoints]
     channel_ctr1 = mean(ctrs1, dims=1)[:]
-    p2c2, c2p2, clustercount2, points2, cluster_to_class2 = load_SRN(f2)
+    p2c2, c2p2, clustercount2, points2, cluster_to_class2, fts2 = load_SRN(f2)
     ctrs2, segs2, L2, R2 = compute_centroids(points2, c2p2, SRN_minpoints)
     ctrs2 = ctrs2[L2 .>= SRN_minpoints, :]
     R2 = R2[L2 .>= SRN_minpoints]
@@ -104,9 +105,21 @@ function coloc_srn(f1, f2; SRN_minpoints=4)
     df12[!,:channel].=1
     df12[!,:radius] .= R1
     df12[!,:channelfile].=f1
+    fts1df=DataFrame(fts1, :auto)
+    df12=hcat([df12, fts1df]...)
     df21[!,:channel].=2
     df21[!,:radius] .= R2
     df21[!,:channelfile].=f2
+    fts2df=DataFrame(fts2, :auto)
+    df21=hcat([df21, fts2df]...)
+    @info "Computing interaction fraction 1->2"
+    corresponding12=df21[df12.nearest_1,:]
+    fraction_interact12 = df12.distance_1 ./ (df12.radius .+ corresponding12.radius)
+    df12[!,:interaction_fract] .= fraction_interact12
+    corresponding21=df12[df21.nearest_1,:]
+    @info "Computing interaction fraction 2->1"
+    fraction_interact21 = df21.distance_1 ./ (df21.radius .+ corresponding21.radius)
+    df21[!,:interaction_fract] .= fraction_interact21
     dfx=vcat([df12, df21]...)
     return dfx
 end
