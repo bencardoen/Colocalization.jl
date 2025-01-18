@@ -97,7 +97,9 @@ function runcoloc()
     @info "Writing pointclouds"
     segs1=data["segs1"]
     c1=dfx[dfx.channel .== 1, :]
-    write_clusters(segs1, "channel_1", outdir)
+    # write_clusters(segs1, "channel_1", outdir)
+    int_segs = filter_interacting(c1, segs1, Inf)
+    write_clusters(int_segs, "channel_1", outdir)
     int_segs = filter_interacting(c1, segs1, F)
     write_clusters(int_segs, "channel_1_interacting", outdir)
     pts=vcat([int_segs[k] for k in keys(int_segs)]...)
@@ -106,7 +108,9 @@ function runcoloc()
 
     segs2=data["segs2"]
     c2=dfx[dfx.channel .== 2, :]
-    write_clusters(segs2, "channel_2", outdir)
+    # write_clusters(segs2, "channel_2", outdir)
+    int_segs = filter_interacting(c2, segs2, Inf)
+    write_clusters(int_segs, "channel_2", outdir)
     int_segs = filter_interacting(c2, segs2, F)
     write_clusters(int_segs, "channel_2_interacting", outdir)
     pts=vcat([int_segs[k] for k in keys(int_segs)]...)

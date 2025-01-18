@@ -91,6 +91,13 @@ The columns are:
 - channel_centroid_{x,y,z} : The centroid of **this** channel
 - distance_to_centroid: the distance of this object's centroid to the channel's centroid (~ density/topology)
 - radius: This is the radius of the circumscribed sphere of this cluster. If, for two clusters, you have R1 and R2 as radii, and their centroid to centroid distance is D12, then you can detect `overlap` = D12 < R1 + R2. This is an approximate measure, as the cluster can have weird shapes that skew the size of the circumscribed circle. 
+- interaction_factor: let a, b be the nearest objects in channel 1, 2, then this is distance(a,b) / sum(radius_a, radius_b)
+
+In addition, VTU files, which you can open with Paraview, are saved.
+- channel_{1,2}_cluster_x.vtu : The x'th cluster (check the CSV file)
+- channel_{1_2}_interacting_cluster_x.vtu: The x'th cluster interacting with the other channel (see interaction factor)
+- channel_{1,2}_interacting : all interacting localiztion points.
+- channel_{1,2}_all : all the raw localiztion points.
 
 #### SRN Specific data
 You can extract specific fields from the SRN MAT file.
