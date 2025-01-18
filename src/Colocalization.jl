@@ -26,7 +26,39 @@ using MAT
 using ImageMorphology
 using WriteVTK
 
-export describe_array, intersection_mask, haussdorff_max, compute_centroids, report_distances, haussdorff_mean, coloc_srn, load_SRN, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
+export describe_array, intersection_mask, haussdorff_max, compute_centroids, filter_interacting, write_clusters, translate_filtered, points_to_vtu, report_distances, haussdorff_mean, coloc_srn, load_SRN, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
+
+
+function write_clusters(segs, prefix="", outpath="")
+    for seg in keys(segs)
+        pts = segs[seg]
+        mt = Dict()
+        # mt["cluster"]=seg
+        points_to_vtu(pts, joinpath(outpath, "$(prefix)_cluster_$(seg)"), mt)
+    end
+end
+# r.interaction_fraction
+
+function translate_filtered(segs)
+    sk = sort(keys(segs) |> collect)
+    fsk = Dict()
+    for (i, s) in enumerate(sk)
+        fsk[s] = i
+    end
+    return fsk 
+end
+
+function filter_interacting(df, segs, tolerance = 1)
+    nsegs = Dict()
+    tsegs = translate_filtered(segs)
+    for seg in keys(segs)
+        ts = tsegs[seg]
+        if df.interaction_fraction[ts] < (1 * tolerance)
+            nsegs[ts] = segs[seg]
+        end
+    end
+    return nsegs
+end
 
 """
 	report_distances(ctrs1, ctrs2, channel_ctr1)
@@ -145,7 +177,12 @@ function coloc_srn(f1, f2; SRN_minpoints=4)
     fraction_interact21 = df21.distance_1 ./ (df21.radius .+ corresponding21.radius)
     df21[!,:interaction_fraction] .= fraction_interact21
     dfx=vcat([df12, df21]...)
-    return dfx
+    data = Dict()
+    data["segs1"]=segs1
+    data["points1"]=points1
+    data["segs2"]=segs2
+    data["points2"]=points2
+    return dfx, data
 end
 
 """

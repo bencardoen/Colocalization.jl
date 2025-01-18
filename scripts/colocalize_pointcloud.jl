@@ -37,6 +37,11 @@ function parse_commandline()
             help = "Filename of second channel"
             arg_type = String
             required = true
+        "--interaction", "-i"
+            help = "Interaction factor, default 1. <, select for tighter interaction, > select for long range interaction"
+            arg_type = Float64
+            required = false
+            default = 1.0
 		"--outdir", "-o"
             help = "output folder, default to current directory"
             arg_type = String
@@ -66,6 +71,11 @@ function runcoloc()
 	first = parsed_args["first"]
 	second = parsed_args["second"]
 	outdir = parsed_args["outdir"]
+    F= parsed_args["interaction"]
+    if F <= 0
+        @error "Invalid interaction value $F"
+        F = 1.0
+    end
     if outdir == ""
         @info "No output directory given, working in current directory $(pwd())"
         outdir = pwd()
@@ -81,9 +91,27 @@ function runcoloc()
         @warn "Output name probably too long ..."
     end
     @info "Starting Colocalization"
-	df = coloc_srn(first, second; SRN_minpoints=parsed_args["mincluster"])
+	dfx, data = coloc_srn(first, second; SRN_minpoints=parsed_args["mincluster"])
     @info "Done... saving to CSV: $(joinpath(outdir, "$(outname).csv"))"
-	CSV.write(joinpath(outdir, "$(outname).csv"), df)
+	CSV.write(joinpath(outdir, "$(outname).csv"), dfx)
+    @info "Writing pointclouds"
+    segs1=data["segs1"]
+    c1=dfx[dfx.channel .== 1, :]
+    write_clusters(segs1, "channel_1", outdir)
+    int_segs = filter_interacting(c1, segs1, F)
+    write_clusters(int_segs, "channel_1_interacting", outdir)
+    pts=vcat([int_segs[k] for k in keys(int_segs)]...)
+    points_to_vtu(pts, joinpath(outdir, "c1_interacting"))
+    points_to_vtu(data["points1"], joinpath(outdir, "c1_all"))
+
+    segs2=data["segs2"]
+    c2=dfx[dfx.channel .== 2, :]
+    write_clusters(segs2, "channel_2", outdir)
+    int_segs = filter_interacting(c2, segs2, F)
+    write_clusters(int_segs, "channel_2_interacting", outdir)
+    pts=vcat([int_segs[k] for k in keys(int_segs)]...)
+    points_to_vtu(pts, joinpath(outdir, "c2_interacting"))
+    points_to_vtu(data["points2"], joinpath(outdir, "c2_all"))
 	@info "Done"
 end
 
