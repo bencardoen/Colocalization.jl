@@ -24,6 +24,7 @@ using Distributions
 using ImageFiltering
 using MAT
 using ImageMorphology
+using WriteVTK
 
 export describe_array, intersection_mask, haussdorff_max, compute_centroids, report_distances, haussdorff_mean, coloc_srn, load_SRN, haussdorff_distance, filter_projection, object_stats, union_mask, union_distance_mask, colocalize_nowindow, colocalize_all, colocalize, segment, tomask, aszero, summarize_colocalization, list_metrics, metrics_iterator
 
@@ -48,6 +49,29 @@ function report_distances(ctrs1, ctrs2, channel_ctr1)
         push!(df, [i, c1[1], c1[2], c1[3], neardistance..., near..., channel_ctr1[1], channel_ctr1[2], channel_ctr1[3], sqrt(sum((c1 .- channel_ctr1).^2))])
     end
     return df
+end
+
+
+function save_points(matfile, outfile; metadata=Dict())
+    # @info "Writing $(size(points)) to $outfile"
+    points = load_SRN(matfile)[4]
+    @info "Writing $(size(points)) to $outfile"
+    points_to_vtu(points, outfile, metadata)
+    @info "Done"
+end
+
+
+function points_to_vtu(points, outfile, metadata=Dict())
+    X = points[:, 1]
+    Y = points[:, 2]
+    Z = points[:, 3]    
+    vf=vtk_grid(outfile, X, Y, Z, [MeshCell(VTKCellTypes.VTK_VERTEX, (i,)) for i in 1:length(X)])
+    for key in keys(metadata)
+        vf[key] = metadata[key]
+    end
+    close(vf)
+    # vtk_grid(outfile, X, Y, Z, [MeshCell(VTKCellTypes.VTK_VERTEX, (i,)) for i in 1:length(X)]) do vtk
+    # end
 end
 
 function compute_centroids(ps, cs, minsize=4)
