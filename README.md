@@ -99,6 +99,18 @@ In addition, VTU files, which you can open with Paraview, are saved.
 - channel_{1,2}_interacting : all interacting localiztion points.
 - channel_{1,2}_all : all the raw localiztion points.
 
+
+#### Processing folders of paired files
+```bash
+julia --project=. scripts/colocalize_pointcloud.jl --patternmatch <inputdir> --outdir <somedir>
+```
+If you have files that need to be paired, e.g. a single directory with paired mat files, you can use pattern matching to process all files. 
+Currently this supports the following pattern:
+```
+CavPTRF_1_1_[A-Z, a-z]+_[0-9]+_merged_threshold_[0-9]+_alpha_[0-9]+.mat
+```
+Output will be saved by the values after `threshold` and `alpha`, e.g. outdir/9_10/... for threshold 9 alpha 10
+
 #### SRN Specific data
 You can extract specific fields from the SRN MAT file.
 Start julia
