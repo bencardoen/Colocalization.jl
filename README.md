@@ -110,6 +110,15 @@ Currently this supports the following pattern:
 ```
 CavPTRF_1_1_[A-Z, a-z]+_[0-9]+_merged_threshold_[0-9]+_alpha_[0-9]+.mat
 ```
+
+- [A-Z, a-z]+ matches alphabetic sequences (e.g. PTRF)
+- [0-9]+ matches one or more numbers, e.g. 1, 23, 09 etc. 
+
+For example, to only match files with threshold 10 you'd do
+```
+ julia --project=. scripts/colocalize_pointcloud.jl --patternmatch <indir> --outdir <outdir> --pattern "CavPTRF_1_1_[A-Z, a-z]+_[0-9]+_merged_threshold_10_alpha_[0-9]+.mat"
+```
+
 Output will be saved by the values after `threshold` and `alpha`, e.g. outdir/9_10/... for threshold 9 alpha 10
 
 #### SRN Specific data
