@@ -156,13 +156,16 @@ function coloc_srn(f1, f2; SRN_minpoints=4)
     ctrs2 = ctrs2[L2 .>= SRN_minpoints, :]
     R2 = R2[L2 .>= SRN_minpoints]
     channel_ctr2 = mean(ctrs2, dims=1)[:]
+    @info size(cluster_to_class1)
     df12 = report_distances(ctrs1, ctrs2, channel_ctr1)
     df21 = report_distances(ctrs2, ctrs1, channel_ctr2)
     df12[!,:channel].=1
+    # df12[!, :class] = cluster_to_class1
     df12[!,:radius] .= R1
     df12[!,:channelfile].=f1
     fts1df=DataFrame(fts1, :auto)
     df12=hcat([df12, fts1df]...)
+    df12[!, :class] .= cluster_to_class1'
     df21[!,:channel].=2
     df21[!,:radius] .= R2
     df21[!,:channelfile].=f2
@@ -176,6 +179,7 @@ function coloc_srn(f1, f2; SRN_minpoints=4)
     @info "Computing interaction fraction 2->1"
     fraction_interact21 = df21.distance_1 ./ (df21.radius .+ corresponding21.radius)
     df21[!,:interaction_fraction] .= fraction_interact21
+    df21[!, :class] .= cluster_to_class2'
     dfx=vcat([df12, df21]...)
     data = Dict()
     data["segs1"]=segs1
