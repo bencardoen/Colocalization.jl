@@ -186,7 +186,22 @@ function coloc_srn(f1, f2; SRN_minpoints=4)
     data["points1"]=points1
     data["segs2"]=segs2
     data["points2"]=points2
+    dfx = update_features(dfx)
     return dfx, data
+end
+
+function update_features(df)
+    xs=names(df, r"^x+")
+    @info "Found $(length(xs)) features with x"
+    refs=["numPnts","minRc", "maxRc", "meanRc","medianRc","StdRc","FA","Cl", "Cp","Cs","Vol","avgDeg","maxDeg","minDeg","charPath","avgEcc","rad","diam","avgCC", "maxCC","minCC",
+    "density", "trans","mod", "avgModOpt", "z_range", "y_range", "x_range", "hollowness", "blobArea"]
+    @info length(refs)
+    if length(refs) != length(xs)
+        @error "Invalid feature names !!!!"
+    end
+    rename!(df, xs .=> refs)
+    return df
+    # error(-1)
 end
 
 """
