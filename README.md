@@ -136,6 +136,25 @@ points = data[4]
 CSV.write("3D-points.csv", DataFrame(points, ["X", "Y", "Z"]))
 ```
 
+You can also read the MAT file directly:
+```julia
+s="example.mat"
+ss=matread(s)
+# Print the variables
+for k in keys(ss)
+    @info k
+end
+# Print the dimensions
+@info size(ss["nodeDeg"])
+data = ss["nodeDeg"]
+using DataFrames
+using CSV
+# Create a dataframe
+df=DataFrame(data, :auto)
+# Write to CSV
+CSV.write("example.csv", df)
+```
+
 <a name="vx"></a>
 ### Voxel 
 
